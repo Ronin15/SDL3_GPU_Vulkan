@@ -4,11 +4,12 @@ A cross-platform graphics application using SDL3's modern GPU API with Vulkan ba
 
 ## Features
 
-- SDL3 GPU API for modern graphics programming
-- Vulkan backend for high-performance rendering
-- Cross-platform support (Linux, macOS, Windows)
-- Automatic shader compilation to SPIR-V
-- Modern C++20 codebase
+- **Modern GPU rendering** with SDL3's cross-platform GPU API and Vulkan backend
+- **Production-ready architecture** with async resource loading and proper resource management
+- **Clean, maintainable code** following C++20 best practices and RAII principles
+- **Cross-platform** support for Linux, macOS, and Windows
+- **Automated build system** with shader compilation and portable runtime paths
+- **Example rendering** with a colored triangle demonstrating the complete graphics pipeline
 
 ## Requirements
 
