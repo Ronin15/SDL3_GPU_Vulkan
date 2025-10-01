@@ -175,6 +175,15 @@ endforeach()
 if(SHADER_OUTPUTS)
     add_custom_target(shaders ALL DEPENDS ${SHADER_OUTPUTS})
     add_dependencies(${PROJECT_NAME} shaders)
+
+    # Copy compiled shaders to binary output directory for runtime access
+    add_custom_command(TARGET shaders POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${SHADER_BINARY_DIR}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
+        COMMENT "Copying compiled shaders to binary directory"
+    )
 endif()
 
 # Platform-specific settings

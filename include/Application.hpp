@@ -5,6 +5,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gpu.h>
 
+#include "Renderer.hpp"
+
 class Application {
 public:
     Application() = default;
@@ -49,4 +51,5 @@ private:
 
     std::unique_ptr<SDL_Window, WindowDeleter> window_;
     std::unique_ptr<SDL_GPUDevice, GPUDeviceDeleter> device_;
+    std::unique_ptr<Renderer> renderer_;
 };

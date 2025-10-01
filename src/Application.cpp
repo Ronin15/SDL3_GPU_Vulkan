@@ -50,6 +50,13 @@ bool Application::Initialize() {
     window_.reset(raw_window);
     device_.reset(raw_device);
 
+    // Initialize renderer
+    renderer_ = std::make_unique<Renderer>();
+    if (!renderer_->Initialize(device_.get(), window_.get())) {
+        std::cerr << "Failed to initialize renderer\n";
+        return false;
+    }
+
     std::cout << "SDL3 GPU initialized successfully with Vulkan backend\n";
     return true;
 }
@@ -74,7 +81,7 @@ void Application::Run() {
 }
 
 void Application::Render() {
-    if (!device_ || !window_) {
+    if (!device_ || !window_ || !renderer_) {
         return;
     }
 
@@ -91,23 +98,7 @@ void Application::Render() {
     }
 
     if (swapchain) {
-        // Begin render pass - aggregate initialization for C compatibility
-        SDL_GPUColorTargetInfo colorTarget{};
-        colorTarget.texture = swapchain;
-        colorTarget.clear_color = {.r = 0.1f, .g = 0.2f, .b = 0.3f, .a = 1.0f};
-        colorTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-        colorTarget.store_op = SDL_GPU_STOREOP_STORE;
-
-        SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(
-            cmd,
-            &colorTarget,
-            1,
-            nullptr
-        );
-
-        // Your rendering commands go here
-
-        SDL_EndGPURenderPass(renderPass);
+        renderer_->Render(cmd, swapchain);
     }
 
     // Submit command buffer
@@ -115,6 +106,9 @@ void Application::Render() {
 }
 
 void Application::Cleanup() noexcept {
+    // Clean up renderer first (releases GPU resources while device is still valid)
+    renderer_.reset();
+
     // Release GPU device before window (proper cleanup order)
     if (device_ && window_) {
         SDL_ReleaseWindowFromGPUDevice(device_.get(), window_.get());
